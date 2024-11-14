@@ -1,52 +1,65 @@
 import { useRestStore } from "@/store/useRestStore";
-import { Link, useLocalSearchParams } from "expo-router";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { View, FlatList } from "react-native";
 import { ModalDialogFolder } from "./components/folder";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { ArrowUpDown } from "lucide-react-native";
+import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
+import { sortList } from "@/constants/sort-list";
+import { FlatItem } from "./flat-item";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const { workpaces } = useRestStore();
-
+  const [sort, setSort] = useState("");
   const currentWorkspace = workpaces.find((workspace) => workspace.id === id);
   const [filter, setFilter] = useState("");
   const filterFolders = useMemo(() => {
-    if (!filter) return currentWorkspace?.folders;
-    return currentWorkspace?.folders.filter((workspace) =>
-      workspace.name.includes(filter)
-    );
-  }, [currentWorkspace?.folders, filter]);
+    let sortedItens = currentWorkspace?.folders ?? [];
+    if(sort === "name-asc"){
+      sortedItens = workpaces.sort((a,b) => a.name.localeCompare(b.name))
+    }
+    if(sort === "name-desc"){
+      sortedItens = workpaces.sort((a,b) => b.name.localeCompare(a.name))
+    }
+    if(sort === "date-asc"){
+      sortedItens = workpaces.sort((a,b) => a.createdAt.localeCompare(b.createdAt))
+    }
+    if(sort === "date-desc"){
+      sortedItens = workpaces.sort((a,b) => b.createdAt.localeCompare(a.createdAt))
+    }
+    if (!filter) return sortedItens;
+    return sortedItens.filter((workspace) => workspace.name.includes(filter));
+  }, [currentWorkspace?.folders, filter, sort]);
   return (
-    <View className="mt-20 flex-1 h-full w-full bg-black">
-      {/* <Text>Details of user {JSON.stringify(currentWorkspace)} </Text> */}
-      <Input
-        placeholder="Search"
-        onChangeText={(text) => setFilter(text)}
-        className="m-2 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
-      />
-      <ModalDialogFolder id={id} />
-      <FlatList
-        className="flex-1 h-full"
-        data={filterFolders}
-        renderItem={({ item }) => <FlatItem item={item} />}
-      />
+    <View className="bg-black flex-1">
+      <View className="mt-20 flex-1 h-full w-full bg-black">
+        <View className="w-full flex-row align-middle justify-center">
+          <Input
+            placeholder="Search"
+            onChangeText={(text) => setFilter(text)}
+            className="m-2 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300 w-11/12"
+          />
+          <DropdownMenuListSelect
+            defaultValue={sort}
+            valuesList={sortList}
+            onSelect={(e) => {
+              setSort(e);
+            }}
+          >
+            <ArrowUpDown color={"#fff"} className="h-4 w-4" />
+          </DropdownMenuListSelect>
+        </View>
+        <ModalDialogFolder id={id} />
+        <FlatList
+          className="flex-1 h-full"
+          data={filterFolders}
+          renderItem={({ item }) => <FlatItem item={item} />}
+        />
+      </View>
     </View>
   );
 }
 
-function FlatItem({item}) {
-  return (
-    <View>
-      <Link
-        href={`/(tabs)/request/${item.id}/${item.id}`}
-        className="bg-[#171717]
-                h-20 border rounded-md border-gray-600 justify-center items-center m-1
-                "
-      >
-        <Text className="text-white">{item.name}</Text>
-      </Link>
-    </View>
-  );
-  
-}
+

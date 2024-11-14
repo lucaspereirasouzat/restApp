@@ -2,8 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Link } from "expo-router";
 import { MoreHorizontal, File } from "lucide-react-native";
 import { View, Text } from "react-native";
-import { DropdownMenuListSelect } from "../request/[folder]/[id]/components/dropdonw-without-form";
-import { customHumanize } from "./humanize-time";
+import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
+import { customHumanize } from "../../../utils/humanize-time";
 
 interface FlatItemProps {
   item: any;

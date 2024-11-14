@@ -1,35 +1,12 @@
-import { View, Text, SafeAreaView, FlatList } from "react-native";
+import { View, SafeAreaView, FlatList } from "react-native";
 import React, { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useRestStore } from "../../../store/useRestStore";
-import { Link } from "expo-router";
 import { ModalDialog } from "./components/dialog";
 import { FlatItem } from "./flat-Item";
-import { DropdownMenuListSelect } from "../request/[folder]/[id]/components/dropdonw-without-form";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react-native";
-
-const sortList = [
-  {
-    label: "Name Asc",
-    value: "name-asc",
-    color: "#fff",
-  },
-  {
-    label: "Name Desc",
-    value: "name-desc",
-    color: "#fff",
-  },
-  {
-    label: "Date Asc",
-    value: "date-asc",
-    color: "#fff",
-  },
-  {
-    label: "Date Desc",
-    value: "date-desc",
-    color: "#fff",
-  },
-];
+import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
+import { ArrowUpDown } from "lucide-react-native";
+import { sortList } from "@/constants/sort-list";
 
 export default function HomeScreen() {
   const { workpaces, removeWorkSpace } = useRestStore();
