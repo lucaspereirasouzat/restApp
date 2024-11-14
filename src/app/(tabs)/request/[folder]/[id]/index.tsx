@@ -13,25 +13,35 @@ import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import axios from "axios";
 import TabsScreen from "@/components/tabs";
 import { BodyForm } from "./body-form";
+import { HeadersForm } from "./headers-form";
+import { ParametersForm } from "./parameters-form";
+import { useHistoryStore } from "@/store/useHistoryStore";
 
 export default function DetailsScreen() {
   const { id, folder } = useLocalSearchParams();
   const { workpaces, addRequestToFolder } = useRestStore();
-
+  const {addToHistory} = useHistoryStore()
   const currentWorkspace = workpaces.find((workspace) => workspace.id === id);
   const [activeTab, setActiveTab] = useState("body");
   const { mutateAsync, data, isPending, error, isError } = useMutation({
     mutationKey: ["send-request"],
     mutationFn: async (data) => {
       const { method, url } = data;
-      const response = await axios({
+      try {
+        console.log({data})
+        const response = await axios({
         method,
         url,
-        params: data?.params,
-        data: data?.body,
-        headers: data?.headers,
+        // params: data?.params,
+        // data: data?.body,
+        // headers: data?.headers,
       });
       return response;
+      } catch (error) {
+        console.log('err',{error});
+        
+      }
+     
     },
   });
   const {
@@ -69,21 +79,27 @@ export default function DetailsScreen() {
   };
 
   async function onSubmit(data) {
-    addRequestToFolder(folder, data);
-    const body =
-      data?.reduce((acc, field) => {
-        acc[field.key] = field.value;
-        return acc;
-      }, {}) ?? {};
+    // addRequestToFolder(folder, data);
+    // const body =
+    //   data?.reduce((acc, field) => {
+    //     acc[field.key] = field.value;
+    //     return acc;
+    //   }, {}) ?? {};
 
     const result = await mutateAsync({
       method: data.method.value,
       url: data.url,
-      body,
+      // body,
     });
+
+    addToHistory({
+      request: data,
+      response: result.data,
+    })
   }
 
   return (
+    <View className="flex-1 bg-black">
     <View className="mt-20 flex-1 h-full w-full bg-black">
       {/* <Text>Details of user {JSON.stringify(currentWorkspace)} </Text> */}
       <View className="flex flex-row w-full bg-black ">
@@ -111,10 +127,11 @@ export default function DetailsScreen() {
         </Button>
       </View>
 
+    <View className="flex-1">
       <TabsScreen
         activeTab={activeTab}
         setTab={setActiveTab}
-        tabClassName="bg-black text-white"
+        tabClassName="bg-black border border-1 border-gray-100 text-white w-1/3"
         tabs={[
           {
             value: "body",
@@ -133,7 +150,7 @@ export default function DetailsScreen() {
             value: "headers",
             title: "Headers",
             content: (
-              <BodyForm 
+              <HeadersForm 
                 bodyFields={bodyFields}
                 errors={errors}
                 control={control}
@@ -146,7 +163,7 @@ export default function DetailsScreen() {
             value: "params",
             title: "Params",
             content: (
-              <BodyForm 
+              <ParametersForm 
                 bodyFields={bodyFields}
                 errors={errors}
                 control={control}
@@ -157,8 +174,9 @@ export default function DetailsScreen() {
           }
         ]}
       />
+      </View>
 
-      <View className="flex align-middle justify-center items-center h-full w-full">
+      <View className="flex flex-1 align-middle justify-center items-center h-full w-full">
         {isError && (
           <Text className="text-red-500">
             Erro: {error?.message || "Falha na requisição"}
@@ -175,6 +193,7 @@ export default function DetailsScreen() {
           <Text className="text-white">Nenhum dado disponível</Text>
         )}
       </View>
+    </View>
     </View>
   );
 }

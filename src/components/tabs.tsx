@@ -32,17 +32,15 @@ export default function TabsScreen({
         onValueChange={setTab}
         className={cn("w-full max-w-[400px] h-full mx-auto flex-col gap-1.5")}
       >
-        {/* <View className="flex flex-row gap-1.5"> */}
-        <TabsList className="flex flex-row bg-blue-600 w-full gap-1">
+        <TabsList className="flex flex-row w-full gap-1">
         {tabs.map(({value,title}) => (
-          <TabsTrigger className={cn('bg-green-400 h-full w-1/3 gap-1',tabClassName)} value={value} key={value}>
+          <TabsTrigger onPress={() => setTab(value)} className={cn('h-full gap-1',tabClassName)} value={value} key={value}>
             <Label className="text-white">{title}</Label>
           </TabsTrigger>
         ))}
         </TabsList>
-        {/* </View> */}
         {tabs.map(({value, content}) => (
-          <TabsContent className="h-80 bg-red-200" value={value} key={value}>
+          <TabsContent className="h-full w-full" value={value} key={value}>
             {content}
           </TabsContent>
         ))}

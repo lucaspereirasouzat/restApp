@@ -1,69 +1,61 @@
 import { FormInput } from "@/components/input";
-import { TouchableOpacity, View, Text } from "react-native";
+import { TouchableOpacity, View, Text, FlatList } from "react-native";
 import { Button } from "@/components/ui/button";
 import { useController } from "react-hook-form";
+import { Trash } from "lucide-react-native";
 
 interface BodyFormProps {
-  bodyFields: any[];
   errors: any;
   control: any;
-  removeField: (index: any) => void;
-  addField: () => void;
 }
 
 export function HeadersForm({
-  // addField,
-  // bodyFields,
   errors,
   control,
-  // removeField,
 }: BodyFormProps): JSX.Element {
   const { field } = useController({
     name: "headers",
     control,
   })
-  console.log({field})
-   const bodyFields = field.value; 
 
   const addField = () => {
-    console.log('add field');
-    
-    field.onChange("body", [...bodyFields, { key: "", value: "" }]);
+    field.onChange([...field?.value, { key: "", value: "" }]);
   };
 
   const removeField = (index) => {
-    const updatedFields = bodyFields.filter((_, idx) => idx !== index);
-    field.onChange("body", updatedFields);
+    const updatedFields = field?.value?.filter((_, idx) => idx !== index);
+    field.onChange(updatedFields);
   };
 
   return (
-    <View className="p-4">
-      <Text className="text-white">Body Fields:</Text>
-      {bodyFields?.map((field, index) => (
-        <View key={index} className="flex flex-row items-center gap-2 mb-2">
-          <FormInput
-            errors={errors}
-            className="flex-1 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
-            control={control}
-            name={`body[${index}].value`}
-          />
-          <FormInput
-            errors={errors}
-            className="flex-1 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
-            control={control}
-            name={`body[${index}].key`}
-          />
-
-          <TouchableOpacity onPress={() => removeField(index)}>
-            <Text className="text-red-500">Remove</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
-      <Button onPress={() => {
-        console.log('test 123');
-        
-        addField()
-      }} className="bg-blue-500">
+    <View className="w-full h-full justify-between pb-9">
+      <FlatList
+        data={field?.value}
+        className="h-40"
+        keyExtractor={(_, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View key={index} className="flex flex-row items-center gap-2 mb-2">
+            <FormInput
+              errors={errors}
+              className="flex-1 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
+              control={control}
+               placeholder="Key"
+              name={`body[${index}].key`}
+            />
+            <FormInput
+              errors={errors}
+              className="flex-1 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
+              control={control}
+              placeholder="Value"
+              name={`body[${index}].value`}
+            />
+            <TouchableOpacity onPress={() => removeField(index)}>
+              <Trash color={"red"} className="w-6 h-6 text-red-500" />
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+      <Button onPress={addField} className="bg-blue-500 w-full">
         <Text>Add Field</Text>
       </Button>
     </View>

@@ -23,7 +23,7 @@ export function FormInput({ name, errors, control, ...props }: FormInputProps) {
         editable={field.disabled}
         {...props}
       />
-      {errors[field.name] && <Text>{errors[field.name].message}</Text>}
+      {errors[field.name] && <Text className="text-red-500">{errors[field.name].message}</Text>}
     </>
   );
 }

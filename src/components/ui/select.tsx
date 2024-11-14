@@ -125,7 +125,7 @@ const SelectLabel = React.forwardRef<SelectPrimitive.LabelRef, SelectPrimitive.L
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
 const SelectItem = React.forwardRef<SelectPrimitive.ItemRef, SelectPrimitive.ItemProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ className, classNameText, children, ...props }, ref) => (
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
@@ -140,7 +140,7 @@ const SelectItem = React.forwardRef<SelectPrimitive.ItemRef, SelectPrimitive.Ite
           <Check size={16} strokeWidth={3} className='text-popover-foreground' />
         </SelectPrimitive.ItemIndicator>
       </View>
-      <SelectPrimitive.ItemText className='text-sm native:text-lg text-popover-foreground native:text-base web:group-focus:text-accent-foreground' />
+      <SelectPrimitive.ItemText className={cn('text-sm native:text-lg text-popover-foreground native:text-base web:group-focus:text-accent-foreground',classNameText)} />
     </SelectPrimitive.Item>
   )
 );

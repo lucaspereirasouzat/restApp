@@ -67,19 +67,17 @@ export const useRestStore = create(
           set({workpaces});
         },
       addRequestToFolder: (folderId, request) =>
-        set((state) => ({
-          workpaces: state.workpaces.map((workSpace) => ({
-            ...workSpace,
-            folders: workSpace.folders.map((folder) =>
-              folder.id === folderId
-                ? {
-                    ...folder,
-                    requests: [...folder.requests, request],
-                  }
-                : folder
-            ),
-          })),
-        })),
+        {
+          let workpaces = get().workpaces;
+          const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.folders.find((folder) => folder.id === folderId));
+          const indexCurrentFolder = workpaces[indexCurrentWorkSpace].folders.findIndex((folder) => folder.id === folderId);
+          if(workpaces[indexCurrentWorkSpace].folders[indexCurrentFolder].requests){
+            workpaces[indexCurrentWorkSpace].folders[indexCurrentFolder].requests.push(request);
+          } else {
+            workpaces[indexCurrentWorkSpace].folders[indexCurrentFolder].requests = [request];
+          }
+          set({workpaces});
+        },
       removeFolder: (folderId) =>
         set((state) => ({
           workpaces: state.workpaces.map((workSpace) => ({
