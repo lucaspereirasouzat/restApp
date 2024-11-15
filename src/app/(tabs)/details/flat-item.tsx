@@ -1,55 +1,84 @@
 import { Collapsible } from "@/components/Collapsible";
-import { Link } from "expo-router";
 import { View, Text, TouchableOpacity } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import {Plus, Folder, FolderOpen} from 'lucide-react-native'
+import { Plus, Folder, FolderOpen, ArrowUpDown } from "lucide-react-native";
+import { DropdownMenuListSelect } from "@/components/dropdonw-without-form";
 
 interface FlatItemProps {
   item: {
-    id: string
-    name: string
+    id: string;
+    name: string;
+    color?: string;
   };
 }
 
-export function FlatItem({ item }:FlatItemProps) {
-  console.log({ item });
+const itensToSelect = [
+  { label: "Create Request", value: "create-request", color: "#fff" },
+  { label: "New Folder", value: "new-folder", color: "#fff" },
+  { label: "Duplicate Folder", value: "duplicate-folder", color: "#fff" },
+  { label: "Rename Folder", value: "rename-folder", color: "#fff" },
+  { label: "Delete Folder", value: "delete-folder", color: "#fff" },
+];
+
+export function FlatItem({ item }: FlatItemProps) {
+  if (!item.color) {
+    console.log(item);
+    return (
+      <View className="flex-row w-full justify-between">
+        <View className="flex-row text-center align-middle justify-center">
+          <Text className="text-white text-xl bg-green-500">{item.method}</Text>
+          <Text className="text-white">{item.name}</Text>
+        </View>
+        <DropdownMenuListSelect
+          defaultValue={"create-request"}
+          valuesList={itensToSelect}
+          onSelect={(e) => {
+            console.log(e);
+          }}
+        >
+          <Plus color={"#fff"} className="w-4 h-4" />
+        </DropdownMenuListSelect>
+      </View>
+    );
+  }
   return (
     <View>
       <Collapsible
         header={({ isOpen, setIsOpen }) => (
           <>
-            <View className="bg-black w-full flex flex-row border border-gray-500 p-4 ">
+            <View className="bg-black w-full flex flex-row border border-gray-500 p-4 justify-between ">
               <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
                 <View className="w-[95%] flex-row ">
-                {/* <View className="flex-row"> */}
-                  {
-                    isOpen ? <FolderOpen color={"#fff"} className="w-4 h-4" /> : <Folder color={"#fff"} className="w-4 h-4" />
-                  }
-                <Text className="text-white text-xl">{" "}{item.name}</Text>
-                {/* </View> */}
-                {/* <Ionicons
-                  name={isOpen ? "chevron-down" : "chevron-forward-outline"}
-                  size={18}
-                  color={"#fff"}
-                /> */}
+                  {isOpen ? (
+                    <FolderOpen
+                      color={item.color ? item.color : "#fff"}
+                      className="w-4 h-4"
+                    />
+                  ) : (
+                    <Folder
+                      color={item.color ? item.color : "#fff"}
+                      className="w-4 h-4"
+                    />
+                  )}
+                  <Text className="text-white text-xl"> {item.name}</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => console.log('clicked')} className="flex-row gap-2">
+              <DropdownMenuListSelect
+                defaultValue={"create-request"}
+                valuesList={itensToSelect}
+                onSelect={(e) => {
+                  console.log(e);
+                }}
+              >
                 <Plus color={"#fff"} className="w-4 h-4" />
-              </TouchableOpacity>
+              </DropdownMenuListSelect>
+              {/* <TouchableOpacity onPress={() => console.log('clicked',item)} className="flex-row gap-2">
+                <Plus color={"#fff"} className="w-4 h-4" />
+              </TouchableOpacity> */}
             </View>
           </>
         )}
         title={item.name}
       ></Collapsible>
-      {/* <Link
-        href={`/(tabs)/request/${item.id}/${item.id}`}
-        className="bg-[#171717]
-                h-20 border rounded-md border-gray-600 justify-center items-center m-1
-                "
-      >
-        <Text className="text-white">{item.name}</Text>
-      </Link> */}
     </View>
   );
 }

@@ -8,6 +8,7 @@ import { ArrowUpDown } from "lucide-react-native";
 import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
 import { sortList } from "@/constants/sort-list";
 import { FlatItem } from "./flat-item";
+import { ModalDialogRequest } from "./components/request";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -16,7 +17,7 @@ export default function DetailsScreen() {
   const currentWorkspace = workpaces.find((workspace) => workspace.id === id);
   const [filter, setFilter] = useState("");
   const filterFolders = useMemo(() => {
-    let sortedItens = currentWorkspace?.folders ?? [];
+    let sortedItens = currentWorkspace?.items ?? [];
     if(sort === "name-asc"){
       sortedItens = workpaces.sort((a,b) => a.name.localeCompare(b.name))
     }
@@ -31,7 +32,7 @@ export default function DetailsScreen() {
     }
     if (!filter) return sortedItens;
     return sortedItens.filter((workspace) => workspace.name.includes(filter));
-  }, [currentWorkspace?.folders, filter, sort]);
+  }, [currentWorkspace?.items, filter, sort]);
   return (
     <View className="bg-black flex-1">
       <View className="mt-20 flex-1 h-full w-full bg-black">
@@ -44,13 +45,12 @@ export default function DetailsScreen() {
           <DropdownMenuListSelect
             defaultValue={sort}
             valuesList={sortList}
-            onSelect={(e) => {
-              setSort(e);
-            }}
+            onSelect={(e) => setSort(e)}
           >
             <ArrowUpDown color={"#fff"} className="h-4 w-4" />
           </DropdownMenuListSelect>
         </View>
+        <ModalDialogRequest workspaceId={id} />
         <ModalDialogFolder id={id} />
         <FlatList
           className="flex-1 h-full"

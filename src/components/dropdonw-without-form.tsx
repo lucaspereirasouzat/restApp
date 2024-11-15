@@ -59,7 +59,7 @@ export function DropdownMenuListSelect({
               classNameText="text-white"
               key={item.value}
               label={item.label}
-              className={`bg-[${item.color}] text-white`}
+              className={` text-white`}
               value={item.value}
             >
               {item.label}

@@ -6,17 +6,20 @@ interface RestStore {
   workpaces: WorkSpace[];
   createWorkSpace: (workSpace: Exclude<WorkSpace, 'id'>) => void;
   removeWorkSpace: (id: string) => void;
-  addFolderToWorkSpace: (workSpaceId: string, folder: Folder) => void;
-  addRequestToFolder: (folderId: string, request: RequestCustom) => void;
+  addFolderToWorkSpace: (workSpaceId: string, folder: Exclude<Folder, 'id'>) => void;
+  addRequestToFolder: (folderId: string, request: Exclude<RequestCustom, 'id'>) => void;
   removeFolder: (folderId: string) => void;
+  addRequestToWorkSpace: (workSpaceId: string, request: RequestCustom) => void;
+  removeRequest: (requestId: string) => void;
 }
+
+type Item = {order: number } & (Folder | RequestCustom);
 
 interface WorkSpace {
   id?: string;
   name: string;
   description?: string;
-  folders: Folder[];
-  requests: RequestCustom[];
+  items: Item[]
   createdAt?: string;
   updatedAt?: string;
 }
@@ -24,7 +27,9 @@ interface WorkSpace {
 interface Folder {
   id: string;
   name: string;
-  requests: RequestCustom[];
+  items: Item[]
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface RequestCustom {
@@ -34,6 +39,9 @@ interface RequestCustom {
   method: string;
   headers: Record<string, string>;
   body: Record<string, string>;
+
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 function generateUniqueId() {
@@ -52,38 +60,78 @@ export const useRestStore = create(
         set((state) => ({
           workpaces: [
             ...state.workpaces,
-            { ...workSpace, id: generateUniqueId(), folders: [], requests: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+            { ...workSpace, id: generateUniqueId(), folders: [], items: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           ],
         })),
       addFolderToWorkSpace: (workSpaceId, folder) =>
         {
           let workpaces = get().workpaces;
           const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.id === workSpaceId.toString());
-          if(workpaces[indexCurrentWorkSpace].folders){
-            workpaces[indexCurrentWorkSpace].folders.push(folder);
+          if(workpaces[indexCurrentWorkSpace].items){
+            workpaces[indexCurrentWorkSpace].items.push({
+              ...folder,
+              order: workpaces[indexCurrentWorkSpace].items.length + 1
+            });
           } else {
-            workpaces[indexCurrentWorkSpace].folders = [folder];
+            workpaces[indexCurrentWorkSpace].items = [{
+              ...folder,
+              order: 0
+            }];
           }
           set({workpaces});
         },
       addRequestToFolder: (folderId, request) =>
         {
           let workpaces = get().workpaces;
-          const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.folders.find((folder) => folder.id === folderId));
-          const indexCurrentFolder = workpaces[indexCurrentWorkSpace].folders.findIndex((folder) => folder.id === folderId);
-          if(workpaces[indexCurrentWorkSpace].folders[indexCurrentFolder].requests){
-            workpaces[indexCurrentWorkSpace].folders[indexCurrentFolder].requests.push(request);
+          const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.items.find((folder) => folder.id === folderId));
+          const indexCurrentFolder = workpaces[indexCurrentWorkSpace].items.findIndex((folder) => folder.id === folderId);
+          if(workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items){
+            workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items.push({
+              ...request,
+              order: workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items.length + 1
+            });
           } else {
-            workpaces[indexCurrentWorkSpace].folders[indexCurrentFolder].requests = [request];
+            workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items = [{
+              ...request,
+              order: 0
+            }];
           }
           set({workpaces});
         },
+      
       removeFolder: (folderId) =>
         set((state) => ({
           workpaces: state.workpaces.map((workSpace) => ({
             ...workSpace,
-            folders: workSpace.folders.filter(
+            folders: workSpace.items.filter(
               (folder) => folder.id !== folderId
+            ),
+          })),
+        })),
+
+        addRequestToWorkSpace: (workSpaceId, request) =>
+        {
+          let workpaces = get().workpaces;
+          const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.id === workSpaceId.toString());
+          if(workpaces[indexCurrentWorkSpace].items){
+            workpaces[indexCurrentWorkSpace].items.push({
+              ...request,
+              order: workpaces[indexCurrentWorkSpace].items.length + 1
+            });
+          } else {
+            workpaces[indexCurrentWorkSpace].items = [{
+              ...request,
+              order: 0
+            }];
+          }
+          set({workpaces});
+        },
+        removeRequest: (requestId) =>
+        set((state) => ({
+          workpaces: state.workpaces.map((workSpace) => ({
+            ...workSpace,
+            items: workSpace.items.filter(
+              (request) => request.id !== requestId
             ),
           })),
         })),

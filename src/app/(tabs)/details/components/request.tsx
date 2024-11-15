@@ -21,9 +21,21 @@ const validation = z.object({
   name: z.string().min(3).max(255),
 })
 
-export function ModalDialogRequest() {
+interface ModalDialogFolderProps {
+  folderId: string
+  workspaceId: string
+}
+
+const defaultRequest = {
+  url: "http://localhost:3000",
+  method: "GET",
+  headers: {},
+  body: {},
+}
+
+export function ModalDialogRequest({folderId, workspaceId}:ModalDialogFolderProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const { createWorkSpace } = useRestStore();
+  const { addRequestToWorkSpace } = useRestStore();
 
   const {
     control,
@@ -35,27 +47,31 @@ export function ModalDialogRequest() {
     },
     resolver: zodResolver(validation),
   });
-  console.log(errors)
+
   const onSubmit = (data) => {
-    console.log("entrou", data);
     setIsOpen(false);
-    createWorkSpace(data);
+    addRequestToWorkSpace(workspaceId,{...data, ...defaultRequest});
   };
 
   return (
     <Dialog open={isOpen}>
       <DialogTrigger asChild>
         <Button onPress={() => setIsOpen(true)} className="bg-yellow-300 mx-1" variant="default">
-          <Text>Create Folder</Text>
+          <Text>Create Request</Text>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-gray-950">
         <DialogHeader>
-          <DialogTitle className="text-white">Create Folder</DialogTitle>
+          <DialogTitle className="text-white">Create Request</DialogTitle>
           <DialogDescription className="text-white">
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>
-          <FormInput className="placeholder:text-slate-400 border-gray-300 text-gray-300" control={control} name="name" errors={errors} />
+          <FormInput 
+            className="placeholder:text-slate-400 border-gray-700 text-gray-300" 
+            control={control} 
+            name="name" 
+            errors={errors} 
+          />
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
