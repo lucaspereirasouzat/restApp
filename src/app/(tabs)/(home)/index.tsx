@@ -15,21 +15,25 @@ export default function HomeScreen() {
   const [sort, setSort] = useState("");
   const filterWorkspaces = useMemo(() => {
     let sortedItens = workpaces;
-    if(sort === "name-asc"){
-      sortedItens = workpaces.sort((a,b) => a.name.localeCompare(b.name))
+    if (sort === "name-asc") {
+      sortedItens = workpaces.sort((a, b) => a.name.localeCompare(b.name));
     }
-    if(sort === "name-desc"){
-      sortedItens = workpaces.sort((a,b) => b.name.localeCompare(a.name))
+    if (sort === "name-desc") {
+      sortedItens = workpaces.sort((a, b) => b.name.localeCompare(a.name));
     }
-    if(sort === "date-asc"){
-      sortedItens = workpaces.sort((a,b) => a.createdAt.localeCompare(b.createdAt))
+    if (sort === "date-asc") {
+      sortedItens = workpaces.sort((a, b) =>
+        a.createdAt.localeCompare(b.createdAt)
+      );
     }
-    if(sort === "date-desc"){
-      sortedItens = workpaces.sort((a,b) => b.createdAt.localeCompare(a.createdAt))
+    if (sort === "date-desc") {
+      sortedItens = workpaces.sort((a, b) =>
+        b.createdAt.localeCompare(a.createdAt)
+      );
     }
     if (!filter) return sortedItens;
     return sortedItens.filter((workspace) => workspace.name.includes(filter));
-  }, [workpaces, filter,sort]);
+  }, [workpaces, filter, sort]);
   return (
     <SafeAreaView className="bg-black">
       <View className="mt-16 mr-2 ml-2">
@@ -53,8 +57,8 @@ export default function HomeScreen() {
           <View className="w-full h-5"></View>
           <ModalDialog />
           <AnimatePresence>
-            {
-              filterWorkspaces.map(item => <MotiView
+            {filterWorkspaces.map((item) => (
+              <MotiView
                 key={item.id}
                 from={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -62,9 +66,12 @@ export default function HomeScreen() {
                 transition={{ type: "timing", duration: 300 }}
                 className="w-full"
               >
-                <FlatItem removeItem={(id) => removeWorkSpace(id)} item={item} />
-                </MotiView>
-            )}
+                <FlatItem
+                  removeItem={(id) => removeWorkSpace(id)}
+                  item={item}
+                />
+              </MotiView>
+            ))}
           </AnimatePresence>
           {/* <FlatList
             className="flex-1 h-full w-full "

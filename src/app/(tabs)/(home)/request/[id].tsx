@@ -12,9 +12,9 @@ import SyntaxHighlighter from "react-native-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import axios from "axios";
 import TabsScreen from "@/components/tabs";
-import { BodyForm } from "./body-form";
-import { HeadersForm } from "./headers-form";
-import { ParametersForm } from "./parameters-form";
+import { BodyForm } from "./components/body-form";
+import { HeadersForm } from "./components/headers-form";
+import { ParametersForm } from "./components/parameters-form";
 import { useHistoryStore } from "@/store/useHistoryStore";
 
 export default function DetailsScreen() {
@@ -100,7 +100,7 @@ export default function DetailsScreen() {
 
   return (
     <View className="flex-1 bg-black">
-    <View className="mt-20 flex-1 h-full w-full bg-black">
+    <View className="flex-1 h-full w-full bg-black">
       {/* <Text>Details of user {JSON.stringify(currentWorkspace)} </Text> */}
       <View className="flex flex-row w-full bg-black ">
         <DropdownMenuList

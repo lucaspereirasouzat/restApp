@@ -14,7 +14,7 @@ import { Text } from "@/components/ui/text";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormInput } from "../../../../components/input";
+import { FormInput } from "../../../../../components/input";
 import { useRestStore } from "@/store/useRestStore";
 
 import ColorPicker, {

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { Folder, FolderOpen, ChevronDown, Pin } from "lucide-react-native";
 import { DropdownMenuListSelect } from "@/components/dropdonw-without-form";
 import { useCallback } from "react";
+import { Link } from "expo-router";
 
 interface FlatItemProps {
   item: {
@@ -76,6 +77,7 @@ export function FlatItem({
   if (!item.color) {
     return (
       <View className="flex-row w-full justify-between p-2">
+        <Link href={`/request/${item.id}`}>
         <View className="flex-row  p-2 w-11/12 gap-2 justify-between">
           <View className="flex-row">
             <Text
@@ -89,6 +91,7 @@ export function FlatItem({
           </View>
           {item.pinned && <Pin color={"#fff"} className="w-0.5 h-0.5" />}
         </View>
+        </Link>
         <DropdownMenuListSelect
           defaultValue={"create-request"}
           valuesList={itensRequestToSelect({ pinned: item?.pinned ?? false })}

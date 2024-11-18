@@ -1,13 +1,13 @@
 import { useRestStore } from "@/store/useRestStore";
 import { useLocalSearchParams } from "expo-router";
-import { View, FlatList, Text } from "react-native";
+import { View, FlatList, Text, ScrollView } from "react-native";
 import { ModalDialogFolder } from "./components/folder";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ArrowUpDown, Plus } from "lucide-react-native";
-import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
+import { DropdownMenuListSelect } from "../../../../components/dropdonw-without-form";
 import { sortList } from "@/constants/sort-list";
-import { FlatItem } from "./flat-item";
+import { FlatItem } from "./components/flat-item";
 import { ModalDialogRequest } from "./components/request";
 import { AnimatePresence, View as MotiView } from "moti";
 export default function DetailsScreen() {
@@ -48,7 +48,7 @@ export default function DetailsScreen() {
   }, [currentWorkspace?.items, filter, sort]);
   return (
     <View className="bg-black flex-1">
-      <View className="mt-20 flex-1 h-full w-full bg-black">
+      <View className="flex-1 h-full w-full bg-black">
         <View className="w-full flex-row align-middle justify-center">
           <Input
             placeholder="Search"
@@ -82,13 +82,14 @@ export default function DetailsScreen() {
         />
        
         <AnimatePresence>
+          <ScrollView>
           {
             filterFolders.map(item => <MotiView
                 key={item.id}
                 from={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "timing", duration: 300 }}
+                transition={{ type: "timing", duration: 500 }}
                 className="w-full"
               >
                 <FlatItem
@@ -101,8 +102,10 @@ export default function DetailsScreen() {
                   item={item}
                   pinRequest={pinRequest}
                 />
-              </MotiView>)
+              </MotiView>
+              )
           }
+          </ScrollView>
           {/* <FlatList
             ItemSeparatorComponent={() => (
               <View className="h-0.5 bg-slate-500" />
