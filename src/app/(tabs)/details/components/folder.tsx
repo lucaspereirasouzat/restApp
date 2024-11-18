@@ -18,11 +18,8 @@ import { FormInput } from "../../../../components/input";
 import { useRestStore } from "@/store/useRestStore";
 
 import ColorPicker, {
-  Panel1,
   Swatches,
   Preview,
-  OpacitySlider,
-  HueSlider,
 } from "reanimated-color-picker";
 
 const validation = z.object({
@@ -32,10 +29,12 @@ const validation = z.object({
 
 interface ModalDialogFolderProps {
   id: string;
+  openDialog?: boolean;
+  setOpenDialog?: (open?: undefined) => void;
 }
 
-export function ModalDialogFolder({ id }: ModalDialogFolderProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+export function ModalDialogFolder({ id, openDialog, setOpenDialog }: ModalDialogFolderProps) {
+  const [isOpen, setIsOpen] = React.useState(openDialog ?? false);
   const { addFolderToWorkSpace } = useRestStore();
 
   const {
@@ -53,8 +52,15 @@ export function ModalDialogFolder({ id }: ModalDialogFolderProps) {
     resolver: zodResolver(validation),
   });
 
+  React.useEffect(() => {
+    if (openDialog) {
+      setIsOpen(openDialog);
+    }
+  }, [openDialog]);
+
   const onSubmit = (data: { name: string }) => {
     setIsOpen(false);
+    setIsOpen(undefined)
     addFolderToWorkSpace(id.toString(), data);
     reset()
   };
@@ -64,7 +70,7 @@ export function ModalDialogFolder({ id }: ModalDialogFolderProps) {
   };
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog onOpenChange={open => setIsOpen(open)} open={isOpen}>
       <DialogTrigger asChild>
         <Button
           onPress={() => setIsOpen(true)}

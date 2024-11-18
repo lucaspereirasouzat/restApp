@@ -7,6 +7,7 @@ import { FlatItem } from "./flat-Item";
 import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
 import { ArrowUpDown } from "lucide-react-native";
 import { sortList } from "@/constants/sort-list";
+import { AnimatePresence, View as MotiView } from "moti";
 
 export default function HomeScreen() {
   const { workpaces, removeWorkSpace } = useRestStore();
@@ -51,14 +52,28 @@ export default function HomeScreen() {
           </View>
           <View className="w-full h-5"></View>
           <ModalDialog />
-          <FlatList
+          <AnimatePresence>
+            {
+              filterWorkspaces.map(item => <MotiView
+                key={item.id}
+                from={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "timing", duration: 300 }}
+                className="w-full"
+              >
+                <FlatItem removeItem={(id) => removeWorkSpace(id)} item={item} />
+                </MotiView>
+            )}
+          </AnimatePresence>
+          {/* <FlatList
             className="flex-1 h-full w-full "
             data={filterWorkspaces}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <FlatItem removeItem={(id) => removeWorkSpace(id)} item={item} />
             )}
-          />
+          /> */}
         </View>
       </View>
     </SafeAreaView>

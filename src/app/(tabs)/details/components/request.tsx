@@ -24,6 +24,10 @@ const validation = z.object({
 interface ModalDialogFolderProps {
   folderId: string
   workspaceId: string
+  openDialog?: {
+    id: string
+  }
+  setOpenDialog?: (open?: undefined) => void
 }
 
 const defaultRequest = {
@@ -33,9 +37,9 @@ const defaultRequest = {
   body: {},
 }
 
-export function ModalDialogRequest({folderId, workspaceId}:ModalDialogFolderProps) {
+export function ModalDialogRequest({folderId, workspaceId, openDialog, setOpenDialog}:ModalDialogFolderProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const { addRequestToWorkSpace } = useRestStore();
+  const { addRequestToWorkSpace, addRequestToFolder } = useRestStore();
 
   const {
     control,
@@ -48,19 +52,30 @@ export function ModalDialogRequest({folderId, workspaceId}:ModalDialogFolderProp
     resolver: zodResolver(validation),
   });
 
-  const onSubmit = (data) => {
+  React.useEffect(() => {
+    if(openDialog){
+      setIsOpen(openDialog);
+    }
+  }, [openDialog]);
+
+  const onSubmit = React.useCallback((data) => {
     setIsOpen(false);
+    if(openDialog){
+      setOpenDialog && setOpenDialog(undefined)
+      return addRequestToFolder(workspaceId,openDialog, {...data, ...defaultRequest});
+    }
     addRequestToWorkSpace(workspaceId,{...data, ...defaultRequest});
-  };
+  },[openDialog, workspaceId]);
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog onOpenChange={open => setIsOpen(open)} open={isOpen}>
       <DialogTrigger asChild>
         <Button onPress={() => setIsOpen(true)} className="bg-yellow-300 mx-1" variant="default">
           <Text>Create Request</Text>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-gray-950">
+      <DialogContent className="sm:max-w-[425px] bg-neutral-900">
+        
         <DialogHeader>
           <DialogTitle className="text-white">Create Request</DialogTitle>
           <DialogDescription className="text-white">

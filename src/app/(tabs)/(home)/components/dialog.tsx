@@ -16,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormInput } from "@/components/input";
 import { useRestStore } from "@/store/useRestStore";
+import { AnimatePresence, View as MotiView } from "moti";
+
 
 const validation = z.object({
   name: z.string().min(3).max(255),
@@ -44,13 +46,23 @@ export function ModalDialog() {
   };
 
   return (
+    <AnimatePresence>
+      
     <Dialog onOpenChange={open => setIsOpen(open)} open={isOpen}>
       <DialogTrigger asChild>
         <Button onPress={() => setIsOpen(true)} className="bg-yellow-300 mx-1" variant="default">
           <Text>Create WorkSpaces</Text>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-neutral-900">
+      <DialogContent className="sm:max-w-[425px] ">
+      <MotiView
+                key={`modal`}
+                from={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "timing", duration: 500 }}
+                className="w-full bg-neutral-900 p-4 rounded-lg"
+              >
         <DialogHeader>
           <DialogTitle className="text-white">Create Documents</DialogTitle>
           <DialogDescription className="text-white">
@@ -67,13 +79,16 @@ export function ModalDialog() {
           <DialogClose asChild>
           <Button
             onPress={handleSubmit(onSubmit)}
-            className="bg-green-400 border-0 border-gray-300"
+            className="bg-green-400 border-0 border-gray-300 mt-2"
           >
             <Text>CREATE DOCUMENT</Text>
           </Button>
           </DialogClose>
         </DialogFooter>
+      </MotiView>
       </DialogContent>
     </Dialog>
+
+    </AnimatePresence>
   );
 }

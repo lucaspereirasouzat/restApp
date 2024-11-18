@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: '#000',
-    marginTop: 6,
-    marginLeft: 24,
+    // marginTop: 6,
+    // marginLeft: 24,
   },
 });

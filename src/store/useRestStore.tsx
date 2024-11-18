@@ -7,13 +7,18 @@ interface RestStore {
   createWorkSpace: (workSpace: Exclude<WorkSpace, 'id'>) => void;
   removeWorkSpace: (id: string) => void;
   addFolderToWorkSpace: (workSpaceId: string, folder: Exclude<Folder, 'id'>) => void;
-  addRequestToFolder: (folderId: string, request: Exclude<RequestCustom, 'id'>) => void;
-  removeFolder: (folderId: string) => void;
+  addRequestToFolder: (workSpaceId: string, folderId: string, request: Exclude<RequestCustom, 'id'>) => void;
+  removeFolder: (workSpaceId: string,folderId: string) => void;
   addRequestToWorkSpace: (workSpaceId: string, request: RequestCustom) => void;
-  removeRequest: (requestId: string) => void;
+  removeRequest: (workSpaceId: string,requestId: string) => void;
+  pinRequest: (workSpaceId: string,requestId: string) => void;
+  duplicateRequest: (workSpaceId: string,requestId: string) => void
 }
 
-type Item = {order: number } & (Folder | RequestCustom);
+type Item = { 
+  pinned?: boolean;
+  order: number 
+} & (Folder | RequestCustom);
 
 interface WorkSpace {
   id?: string;
@@ -70,44 +75,48 @@ export const useRestStore = create(
           if(workpaces[indexCurrentWorkSpace].items){
             workpaces[indexCurrentWorkSpace].items.push({
               ...folder,
+              id: generateUniqueId(),
+              items: [],
               order: workpaces[indexCurrentWorkSpace].items.length + 1
             });
           } else {
             workpaces[indexCurrentWorkSpace].items = [{
               ...folder,
+              items: [],
+              id: generateUniqueId(),
               order: 0
             }];
           }
           set({workpaces});
         },
-      addRequestToFolder: (folderId, request) =>
+      addRequestToFolder: (workSpaceId, folderId, request) =>
         {
           let workpaces = get().workpaces;
-          const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.items.find((folder) => folder.id === folderId));
+          const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.id === workSpaceId.toString());
           const indexCurrentFolder = workpaces[indexCurrentWorkSpace].items.findIndex((folder) => folder.id === folderId);
           if(workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items){
             workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items.push({
               ...request,
+              id: generateUniqueId(),
               order: workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items.length + 1
             });
           } else {
             workpaces[indexCurrentWorkSpace].items[indexCurrentFolder].items = [{
               ...request,
+              id: generateUniqueId(),
               order: 0
             }];
           }
           set({workpaces});
         },
       
-      removeFolder: (folderId) =>
-        set((state) => ({
-          workpaces: state.workpaces.map((workSpace) => ({
-            ...workSpace,
-            folders: workSpace.items.filter(
-              (folder) => folder.id !== folderId
-            ),
-          })),
-        })),
+      removeFolder: (workSpaceId, folderId) =>{
+          const workspaces = get().workpaces;
+          const indexCurrentWorkSpace = workspaces.findIndex((workSpace) => workSpace.id === workSpaceId);
+          const indexCurrentRequest = workspaces[indexCurrentWorkSpace].items.findIndex((request) => request.id === folderId);
+          workspaces[indexCurrentWorkSpace].items.splice(indexCurrentRequest, 1);
+          set({workspaces});
+        },
 
         addRequestToWorkSpace: (workSpaceId, request) =>
         {
@@ -116,25 +125,46 @@ export const useRestStore = create(
           if(workpaces[indexCurrentWorkSpace].items){
             workpaces[indexCurrentWorkSpace].items.push({
               ...request,
+              id: generateUniqueId(),
               order: workpaces[indexCurrentWorkSpace].items.length + 1
             });
           } else {
             workpaces[indexCurrentWorkSpace].items = [{
               ...request,
+              id: generateUniqueId(),
               order: 0
             }];
           }
           set({workpaces});
         },
-        removeRequest: (requestId) =>
-        set((state) => ({
-          workpaces: state.workpaces.map((workSpace) => ({
-            ...workSpace,
-            items: workSpace.items.filter(
-              (request) => request.id !== requestId
-            ),
-          })),
-        })),
+        removeRequest: (workSpaceId, requestId) => {
+          const workspaces = get().workpaces;
+          const indexCurrentWorkSpace = workspaces.findIndex((workSpace) => workSpace.id === workSpaceId);
+          const indexCurrentRequest = workspaces[indexCurrentWorkSpace].items.findIndex((request) => request.id === requestId);
+          workspaces[indexCurrentWorkSpace].items.splice(indexCurrentRequest, 1);
+          set({workspaces});
+        },
+        pinRequest: (workSpaceId, requestId) => {
+          const workspaces = get().workpaces;
+          const indexCurrentWorkSpace = workspaces.findIndex((workSpace) => workSpace.id === workSpaceId);
+          const indexCurrentRequest = workspaces[indexCurrentWorkSpace].items.findIndex((request) => request.id === requestId);
+          workspaces[indexCurrentWorkSpace].items[indexCurrentRequest].pinned = !workspaces[indexCurrentWorkSpace].items[indexCurrentRequest].pinned;
+          set({workspaces});
+        },
+        duplicateRequest: (workSpaceId, requestId) => {
+          const workspaces = get().workpaces;
+          const indexCurrentWorkSpace = workspaces.findIndex((workSpace) => workSpace.id === workSpaceId);
+          const indexCurrentRequest = workspaces[indexCurrentWorkSpace].items.findIndex((request) => request.id === requestId);
+          const request = workspaces[indexCurrentWorkSpace].items[indexCurrentRequest];
+          workspaces[indexCurrentWorkSpace].items.push({
+            ...request,
+            name: `${request.name} - Copy`,
+            id: generateUniqueId(),
+            order: workspaces[indexCurrentWorkSpace].items.length + 1
+          });
+          set({workspaces});
+        }
+        
     }),
     {
       name: "rest-store", // The key for AsyncStorage
