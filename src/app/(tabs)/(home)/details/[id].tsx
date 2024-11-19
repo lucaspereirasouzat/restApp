@@ -24,7 +24,6 @@ export default function DetailsScreen() {
   const [openRequest, setOpenRequest] = useState(undefined);
   const [openFolder, setOpenFolder] = useState(undefined);
   const [filter, setFilter] = useState("");
-  const [visible, setVisible] = useState(false);
   const filterFolders = useMemo(() => {
     let sortedItens = currentWorkspace?.items ?? [];
     if (sort === "name-asc") {

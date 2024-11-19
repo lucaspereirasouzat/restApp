@@ -45,7 +45,7 @@ export function DropdownMenuListSelect({
       value={selectedValue}
       onValueChange={(value) => onSelect(value?.value)}
     >
-      <SelectTrigger className="border-0 border-gray-600 bg-black p-0 m-0 ">
+      <SelectTrigger className="border-0 border-gray-600 bg-yellow-400 p-1 m-0 flex-col ">
         {children}
       </SelectTrigger>
       <SelectContent
