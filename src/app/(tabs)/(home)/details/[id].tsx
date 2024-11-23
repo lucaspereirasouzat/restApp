@@ -9,7 +9,7 @@ import { DropdownMenuListSelect } from "../../../../components/dropdonw-without-
 import { sortList } from "@/constants/sort-list";
 import { FlatItem } from "./components/flat-item";
 import { ModalDialogRequest } from "./components/request";
-import { AnimatePresence, View as MotiView } from "moti";
+import { AnimatePresence, MotiView } from "moti";
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const {
@@ -83,12 +83,12 @@ export default function DetailsScreen() {
         <AnimatePresence>
           <ScrollView>
           {
-            filterFolders.map(item => <MotiView
+            filterFolders.map((item, index) => <MotiView
                 key={item.id}
                 from={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "timing", duration: 500 }}
+                transition={{ type: "timing", duration: 500 + index * 100 }}
                 className="w-full"
               >
                 <FlatItem

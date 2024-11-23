@@ -75,10 +75,17 @@ export function FlatItem({
   );
 
   if (!item.color) {
+    const searchParams = new URLSearchParams()
+    searchParams.set('id', item.id)
+    searchParams.set('workspaceId', workSpaceId)
+    // searchParams.set('folderId', item.folderId)
     return (
-      <View className="flex-row w-full justify-between p-2">
-        <Link className="flex-row  p-2 w-11/12 bg-blue-600 gap-2 justify-between" href={`/request/${item.id}`}>
-        <View className="flex-row  p-2 w-full bg-red-500 gap-2 justify-between">
+      <View className="flex-row w-full justify-between p-2 border-b border-gray-600">
+        <Link 
+          className="flex-row  p-2 w-11/12 gap-2 justify-between" 
+          href={`/request/${item.id}?${searchParams.toString()}`}
+        >
+        <View className="flex-row  p-2 w-full gap-2 justify-between">
           <View className="flex-row">
             <Text
               style={{ color: methodsColors[item.method] }}
@@ -115,7 +122,6 @@ export function FlatItem({
       </View>
     );
   }
-
   return (
     <View>
       <Collapsible

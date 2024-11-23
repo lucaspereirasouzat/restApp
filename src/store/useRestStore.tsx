@@ -122,7 +122,21 @@ export const useRestStore = create(
         {
           let workpaces = get().workpaces;
           const indexCurrentWorkSpace = workpaces.findIndex((workSpace) => workSpace.id === workSpaceId.toString());
-          if(workpaces[indexCurrentWorkSpace].items){
+          console.log({
+            workSpaceId, request
+          });
+          
+          if(workpaces[indexCurrentWorkSpace]?.items){
+            const requestIndex = workpaces[indexCurrentWorkSpace].items.findIndex((item) => item.id === request.id);
+
+            if(requestIndex !== -1){
+              workpaces[indexCurrentWorkSpace].items[requestIndex] = {
+                ...request,
+                order: workpaces[indexCurrentWorkSpace].items[requestIndex].order
+              }
+              return set({workpaces});
+            }
+
             workpaces[indexCurrentWorkSpace].items.push({
               ...request,
               id: generateUniqueId(),

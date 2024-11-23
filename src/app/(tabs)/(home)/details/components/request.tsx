@@ -33,8 +33,8 @@ interface ModalDialogFolderProps {
 const defaultRequest = {
   url: "http://localhost:3000",
   method: "GET",
-  headers: {},
-  body: {},
+  headers: [],
+  body: [],
 }
 
 export function ModalDialogRequest({folderId, workspaceId, openDialog, setOpenDialog}:ModalDialogFolderProps) {

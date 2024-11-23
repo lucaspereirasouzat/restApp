@@ -22,7 +22,7 @@ const listValues = [{
 
 export function FlatItem({ item, removeItem }: FlatItemProps) {
   return (
-    <Card className="w-full bg-zinc-950 text-white p-2 mt-1 mb-1 border rounded-md border-gray-600">
+    <Card key={item.id} className="w-full bg-zinc-950 text-white p-2 mt-1 mb-1 border rounded-md border-gray-600">
       <View className="w-full flex flex-row items-start justify-between">
         <Link
           href={`/(tabs)/details/${item.id}`}

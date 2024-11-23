@@ -8,6 +8,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { AnimatePresence, MotiView } from "moti";
 
 interface DropdownMenuListProps {
   title?: string;
@@ -26,7 +27,8 @@ export function DropdownMenuListSelect({
   valuesList,
   defaultValue,
   children,
-  onSelect
+  onSelect,
+
 }: DropdownMenuListProps) {
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -37,7 +39,8 @@ export function DropdownMenuListSelect({
   };
 
   const [selectedValue, setSelectedValue] = useState(
-    valuesList.find((item) => item.value === defaultValue)?.value || defaultValue
+    valuesList.find((item) => item.value === defaultValue)?.value ||
+      defaultValue
   );
 
   return (
@@ -45,28 +48,39 @@ export function DropdownMenuListSelect({
       value={selectedValue}
       onValueChange={(value) => onSelect(value?.value)}
     >
-      <SelectTrigger className="border-0 border-gray-600 bg-yellow-400 p-1 m-0 flex-col ">
+      <SelectTrigger className="border-0 border-gray-600 p-1 m-0 flex-col  mt-2">
         {children}
       </SelectTrigger>
-      <SelectContent
-        insets={contentInsets}
-        className="w-[100px] bg-black text-white"
-      >
-        <SelectGroup className="text-white">
-          <SelectLabel>{title}</SelectLabel>
-          {valuesList.map((item) => (
-            <SelectItem
-              classNameText="text-white"
-              key={item.value}
-              label={item.label}
-              className={` text-white`}
-              value={item.value}
-            >
-              {item.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
+      <AnimatePresence exitBeforeEnter>
+        <SelectContent
+          insets={contentInsets}
+          className="w-[100px] bg-black text-white"
+        >
+          <SelectGroup className="text-white mt-2">
+            {title && <SelectLabel>{title}</SelectLabel>}
+            {valuesList.map((item, index) => (
+              <MotiView
+                key={item.id}
+                from={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: "timing", duration: 500 + index * 100 }}
+                className="w-full"
+              >
+                <SelectItem
+                  classNameText="text-white"
+                  key={item.value}
+                  label={item.label}
+                  className={` text-white`}
+                  value={item.value}
+                >
+                  {item.label}
+                </SelectItem>
+              </MotiView>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </AnimatePresence>
     </Select>
   );
 }

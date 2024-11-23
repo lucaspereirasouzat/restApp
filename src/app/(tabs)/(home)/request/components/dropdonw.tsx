@@ -44,16 +44,16 @@ export function DropdownMenuList({title, valuesList, defaultValue, name, control
           placeholder="Select a fruit"
         />
       </SelectTrigger>
-      <SelectContent insets={contentInsets} className="w-[100px] bg-gray-500 text-white">
-        <SelectGroup className={`text-white  `}>
-          <SelectLabel>{title}</SelectLabel>
+      <SelectContent insets={contentInsets} className="w-[100px] text-white">
+        <SelectGroup className={`text-white bg-black `}>
+          {title && <SelectLabel>{title}</SelectLabel>}
           {valuesList.map((item) => (
             <SelectItem
-              
               key={item.value}
               label={item.label}
               className={`bg-[${item.color}] text-white`}
               value={item.value}
+              classNameText="text-white"
             >
               {item.label}
             </SelectItem>

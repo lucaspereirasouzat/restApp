@@ -2,32 +2,89 @@ import { FormInput } from "@/components/input";
 import { TouchableOpacity, View, Text } from "react-native";
 import { Button } from "@/components/ui/button";
 import { useController } from "react-hook-form";
-import { FlatList } from "react-native";
+import { ScrollView } from "react-native";
 import { Trash } from "lucide-react-native";
+import { AnimatePresence, MotiView } from "moti";
+import { FormCheckBox } from "@/components/check-box";
 
 interface BodyFormProps {
-  errors: any;
   control: any;
 }
 
-export function BodyForm({ errors, control }: BodyFormProps): JSX.Element {
-  const { field } = useController({
+export function BodyForm({ control }: BodyFormProps): JSX.Element {
+  const { field, formState: {errors} } = useController({
     name: "body",
     control,
   });
-
+  const { field: fieldType } = useController({
+    name: "body-type",
+    control,
+  });
+  console.log({
+    fieldType,
+    value: field.value,
+  });
+  
   const addField = () => {
-    field.onChange([...field?.value, { key: "", value: "" }]);
+    field.onChange([
+      ...field?.value,
+      { key: "", value: "", id: Date.now(), enabled: true },
+    ]);
   };
 
-  const removeField = (index) => {
-    const updatedFields = field?.value?.filter((_, idx) => idx !== index);
+  const removeField = (id) => {
+    const updatedFields = field?.value?.filter((item) => item.id !== id);
     field.onChange(updatedFields);
   };
 
   return (
     <View className="w-full h-full justify-between pb-9">
-      <FlatList
+      <ScrollView className="h-40">
+        <AnimatePresence>
+          {field?.value.map((item, index) => (
+            <MotiView
+              key={item.id}
+              from={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ type: "timing", duration: 500 + index * 100 }}
+              className="w-full"
+            >
+              <View
+                key={item.id}
+                className="flex flex-row items-center gap-2 mb-2"
+              >
+                <FormCheckBox
+                  className="bg-black border border-gray-300"
+                  name={`body[${index}].enabled`}
+                  control={control}
+                  errors={errors}
+                />
+                <FormInput
+                  errors={errors}
+                  className="flex-1 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
+                  control={control}
+                  placeholder="Key"
+                  name={`body[${index}].key`}
+                />
+                <FormInput
+                  errors={errors}
+                  className="flex-1 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300"
+                  control={control}
+                  placeholder="Value"
+                  name={`body[${index}].value`}
+                />
+              
+                {/* <Checkbox checked /> */}
+                <TouchableOpacity onPress={() => removeField(item.id)}>
+                  <Trash color={"red"} className="w-6 h-6 text-red-500" />
+                </TouchableOpacity>
+              </View>
+            </MotiView>
+          ))}
+        </AnimatePresence>
+      </ScrollView>
+      {/* <FlatList
         data={field?.value}
         className="h-40"
         keyExtractor={(_, index) => index.toString()}
@@ -52,7 +109,7 @@ export function BodyForm({ errors, control }: BodyFormProps): JSX.Element {
             </TouchableOpacity>
           </View>
         )}
-      />
+      /> */}
       <Button onPress={addField} className="bg-blue-500 w-full">
         <Text>Add Field</Text>
       </Button>
