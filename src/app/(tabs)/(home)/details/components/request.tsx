@@ -14,8 +14,9 @@ import { Text } from "@/components/ui/text";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormInput } from "../../../../../components/input";
+import { FormInput } from "@/components/input";
 import { useRestStore } from "@/store/useRestStore";
+import { AnimatePresence, MotiView } from "moti";
 
 const validation = z.object({
   name: z.string().min(3).max(255),
@@ -26,7 +27,7 @@ interface ModalDialogFolderProps {
   workspaceId: string
   openDialog?: {
     id: string
-  }
+  } | boolean
   setOpenDialog?: (open?: undefined) => void
 }
 
@@ -53,29 +54,37 @@ export function ModalDialogRequest({folderId, workspaceId, openDialog, setOpenDi
   });
 
   React.useEffect(() => {
-    if(openDialog){
+    if(openDialog != isOpen){
       setIsOpen(openDialog);
     }
-  }, [openDialog]);
+  }, [openDialog,isOpen]);
 
   const onSubmit = React.useCallback((data) => {
     setIsOpen(false);
-    if(openDialog){
-      setOpenDialog && setOpenDialog(undefined)
+    setOpenDialog && setOpenDialog(undefined)
+    if(openDialog && typeof openDialog === "object"){
       return addRequestToFolder(workspaceId,openDialog, {...data, ...defaultRequest});
     }
     addRequestToWorkSpace(workspaceId,{...data, ...defaultRequest});
   },[openDialog, workspaceId]);
 
   return (
+    <AnimatePresence >
     <Dialog onOpenChange={open => setIsOpen(open)} open={isOpen}>
-      <DialogTrigger asChild>
-        <Button onPress={() => setIsOpen(true)} className="bg-yellow-300 mx-1" variant="default">
+       {/* <DialogTrigger asChild> 
+         <Button onPress={() => setIsOpen(true)} className="bg-yellow-300 mx-1" variant="default">
           <Text>Create Request</Text>
-        </Button>
-      </DialogTrigger>
+        </Button> 
+       </DialogTrigger>  */}
       <DialogContent className="sm:max-w-[425px] bg-neutral-900">
-        
+         <MotiView
+            key={`modal-request`}
+            from={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ type: "timing", duration: 500 }}
+            className="w-full bg-neutral-900 p-4 rounded-lg"
+          >
         <DialogHeader>
           <DialogTitle className="text-white">Create Request</DialogTitle>
           <DialogDescription className="text-white">
@@ -98,7 +107,9 @@ export function ModalDialogRequest({folderId, workspaceId, openDialog, setOpenDi
           </Button>
           </DialogClose>
         </DialogFooter>
+        </MotiView>
       </DialogContent>
     </Dialog>
+    </AnimatePresence>
   );
 }

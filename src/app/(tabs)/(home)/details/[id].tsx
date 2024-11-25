@@ -1,6 +1,12 @@
 import { useRestStore } from "@/store/useRestStore";
 import { useLocalSearchParams } from "expo-router";
-import { View, FlatList, Text, ScrollView } from "react-native";
+import {
+  View,
+  FlatList,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { ModalDialogFolder } from "./components/folder";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -10,6 +16,13 @@ import { sortList } from "@/constants/sort-list";
 import { FlatItem } from "./components/flat-item";
 import { ModalDialogRequest } from "./components/request";
 import { AnimatePresence, MotiView } from "moti";
+import DraggableFlatList from "react-native-draggable-flatlist";
+
+const addItens = [
+  { label: "Create Folder", value: "folder" },
+  { label: "Create Request", value: "request" },
+];
+
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const {
@@ -27,18 +40,18 @@ export default function DetailsScreen() {
   const filterFolders = useMemo(() => {
     let sortedItens = currentWorkspace?.items ?? [];
     if (sort === "name-asc") {
-      sortedItens = workpaces.sort((a, b) => a.name.localeCompare(b.name));
+      sortedItens = sortedItens.sort((a, b) => a.name.localeCompare(b.name));
     }
     if (sort === "name-desc") {
-      sortedItens = workpaces.sort((a, b) => b.name.localeCompare(a.name));
+      sortedItens = sortedItens.sort((a, b) => b.name.localeCompare(a.name));
     }
     if (sort === "date-asc") {
-      sortedItens = workpaces.sort((a, b) =>
+      sortedItens = sortedItens.sort((a, b) =>
         a.createdAt.localeCompare(b.createdAt)
       );
     }
     if (sort === "date-desc") {
-      sortedItens = workpaces.sort((a, b) =>
+      sortedItens = sortedItens.sort((a, b) =>
         b.createdAt.localeCompare(a.createdAt)
       );
     }
@@ -63,8 +76,15 @@ export default function DetailsScreen() {
           </DropdownMenuListSelect>
           <DropdownMenuListSelect
             defaultValue={sort}
-            valuesList={sortList}
-            onSelect={(e) => setSort(e)}
+            valuesList={addItens}
+            onSelect={(e) => {
+              console.log("item", e);
+              if (e === "folder") {
+                setOpenFolder(true);
+              } else {
+                setOpenRequest(true);
+              }
+            }}
           >
             <Plus color={"#fff"} className="h-4 w-4" />
           </DropdownMenuListSelect>
@@ -79,60 +99,46 @@ export default function DetailsScreen() {
           openDialog={openFolder}
           id={id}
         />
-       
+
         <AnimatePresence>
-          <ScrollView>
-          {
-            filterFolders.map((item, index) => <MotiView
-                key={item.id}
-                from={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "timing", duration: 500 + index * 100 }}
-                className="w-full"
-              >
-                <FlatItem
-                  workSpaceId={id}
-                  duplicateRequest={duplicateRequest}
-                  setOpenRequest={setOpenRequest}
-                  setOpenFolder={setOpenFolder}
-                  removeFolder={removeFolder}
-                  removeRequest={removeRequest}
-                  item={item}
-                  pinRequest={pinRequest}
-                />
-              </MotiView>
-              )
-          }
-          </ScrollView>
-          {/* <FlatList
-            ItemSeparatorComponent={() => (
-              <View className="h-0.5 bg-slate-500" />
-            )}
-            className="flex-1 h-full"
+          {filterFolders.map((item, index) => (
+            <MotiView
+              key={item.id}
+              from={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ type: "timing", duration: 500 + index * 100 }}
+              className="w-full"
+            >
+              <FlatItem
+                workSpaceId={id}
+                duplicateRequest={duplicateRequest}
+                setOpenRequest={setOpenRequest}
+                setOpenFolder={setOpenFolder}
+                removeFolder={removeFolder}
+                removeRequest={removeRequest}
+                item={item}
+                pinRequest={pinRequest}
+              />
+            </MotiView>
+          ))}
+
+          {/* <DraggableFlatList
             data={filterFolders}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <MotiView
-                key={item.id}
-                from={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "timing", duration: 300 }}
-                className="w-full"
-                // style={styles.item}
-              >
-                <FlatItem
-                  workSpaceId={id}
-                  duplicateRequest={duplicateRequest}
-                  setOpenRequest={setOpenRequest}
-                  setOpenFolder={setOpenFolder}
-                  removeFolder={removeFolder}
-                  removeRequest={removeRequest}
-                  item={item}
-                  pinRequest={pinRequest}
-                />
-              </MotiView>
+            onDragEnd={({ data }) => console.log(data)}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, drag, isActive }) => (
+              <TouchableOpacity
+          style={{
+            height: 100,
+            // backgroundColor: isActive ? "red" : item.backgroundColor,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onLongPress={drag}
+        >
+             
+              </TouchableOpacity>
             )}
           /> */}
         </AnimatePresence>

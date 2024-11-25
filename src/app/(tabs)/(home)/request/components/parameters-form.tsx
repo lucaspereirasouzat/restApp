@@ -37,7 +37,7 @@ export function ParametersForm({ control }: BodyFormProps): JSX.Element {
     <View className="w-full h-full justify-between pb-9">
       <ScrollView className="h-40">
         <AnimatePresence>
-          {field?.value.map((item, index) => (
+          {field?.value?.map((item, index) => (
             <MotiView
               key={item.id}
               from={{ opacity: 0, scale: 0.9 }}

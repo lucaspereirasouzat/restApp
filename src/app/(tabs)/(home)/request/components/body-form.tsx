@@ -20,10 +20,6 @@ export function BodyForm({ control }: BodyFormProps): JSX.Element {
     name: "body-type",
     control,
   });
-  console.log({
-    fieldType,
-    value: field.value,
-  });
   
   const addField = () => {
     field.onChange([
@@ -38,8 +34,8 @@ export function BodyForm({ control }: BodyFormProps): JSX.Element {
   };
 
   return (
-    <View className="w-full h-full justify-between pb-9">
-      <ScrollView className="h-40">
+    <View className="w-full h-full justify-between pb-10">
+      <ScrollView className="h-10">
         <AnimatePresence>
           {field?.value.map((item, index) => (
             <MotiView

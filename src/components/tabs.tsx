@@ -28,7 +28,7 @@ export default function TabsScreen({
   tabsClassName
 }: TabsScreenProps) {
   return (
-    <View className="flex-1 h-full justify-center p-6">
+    <View className="flex-1 w-full h-full justify-center p-6">
       <Tabs
         value={activeTab}
         onValueChange={setTab}
