@@ -14,9 +14,7 @@ import { BodyForm } from "./components/body-form";
 import { HeadersForm } from "./components/headers-form";
 import { ParametersForm } from "./components/parameters-form";
 import { useHistoryStore } from "@/store/useHistoryStore";
-import { BODY_LIST } from "@/constants/body-options";
 import { MountPreview } from "./components/mount-preview";
-
 export default function DetailsScreen() {
   const { id, workspaceId } = useLocalSearchParams();
 
@@ -39,12 +37,13 @@ export default function DetailsScreen() {
         if (data.method !== "GET") {
           data.body = data.body
         }
+        const startTime = performance.now(); // Start timing
         const response = await ky(url, {
           method,
           headers: data?.headers,
           body,
         });
-
+        const endTime = performance.now(); // End timing
         let result: any;
         if (
           response.headers.get("content-type")?.includes("application/json")
@@ -57,6 +56,7 @@ export default function DetailsScreen() {
         return {
           response,
           result,
+          time: endTime - startTime,
         };
       } catch (error) {
         console.log("err", { error });
@@ -243,20 +243,7 @@ export default function DetailsScreen() {
             tabs={[
               {
                 value: "body",
-                title:
-                  activeTab === "body" ? (
-                    <View className="bg-blue-600">
-                      <DropdownMenuList
-                        control={control}
-                        errors={errors}
-                        name="body-type"
-                        title="Methods"
-                        valuesList={BODY_LIST}
-                      />
-                    </View>
-                  ) : (
-                    "Body"
-                  ),
+                title: "Body",
                 content: <BodyForm control={control} />,
               },
               {

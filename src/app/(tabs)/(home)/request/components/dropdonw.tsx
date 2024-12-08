@@ -20,6 +20,7 @@ interface DropdownMenuListProps {
   defaultValue: string;
   name: string
   control: any
+  
 }
 
 export function DropdownMenuList({title, valuesList, defaultValue, name, control}: DropdownMenuListProps) {

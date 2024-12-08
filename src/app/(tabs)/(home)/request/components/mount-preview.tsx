@@ -2,6 +2,7 @@ import { getStatusCodeColor } from "@/utils/getStatusCodeColor";
 import { View, Text } from "react-native";
 import SyntaxHighlighter from "react-native-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import {WebView} from "react-native-webview"
 
 interface MountPreviewProps {
   data: any;
@@ -25,10 +26,12 @@ export function MountPreview({ data, isPending, error, isError }: MountPreviewPr
   if (!data) {
     return <Text className="text-white">Nenhum dado disponível</Text>;
   }
-
+  console.log(data);
+  
   return (
     <View className="flex-1 w-full">
-      <View className="h-14 bg-neutral-900 align-middle justify-center p-2">
+      {/* <View className="flex flex-row w-full bg-yellow-400"> */}
+      <View className="flex-row bg-neutral-900 justify-start p-2 w-full">
         <View
           style={{
             backgroundColor: getStatusCodeColor(data.response.status),
@@ -39,7 +42,17 @@ export function MountPreview({ data, isPending, error, isError }: MountPreviewPr
             <Text>{data.response.status} </Text>
           </Text>
         </View>
+         <View
+          
+          className="w-15 h-10 p-2 bg-gray-500"
+        >
+          <Text className="text-white ">
+            <Text>{data.time.toFixed(2)}ms </Text>
+          </Text>
+        </View>
       </View>
+      {/* </View> */}
+      {/* <WebView className="flex-1"  /> */}
       <SyntaxHighlighter language="json" style={dracula}>
         {JSON.stringify(data.result, null, 2)}
       </SyntaxHighlighter>

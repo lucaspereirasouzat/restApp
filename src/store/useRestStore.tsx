@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 interface RestStore {
   workpaces: WorkSpace[];
   createWorkSpace: (workSpace: Exclude<WorkSpace, 'id'>) => void;
+  updateWorkSpace: (id: string, workSpace: WorkSpace) => void;
   removeWorkSpace: (id: string) => void;
   addFolderToWorkSpace: (workSpaceId: string, folder: Exclude<Folder, 'id'>) => void;
   addRequestToFolder: (workSpaceId: string, folderId: string, request: Exclude<RequestCustom, 'id'>) => void;
@@ -68,6 +69,13 @@ export const useRestStore = create(
             { ...workSpace, id: generateUniqueId(), folders: [], items: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           ],
         })),
+        updateWorkSpace: (id, updatedWorkSpace) =>
+        set((state) => ({
+          workpaces: state.workpaces.map((workSpace) =>
+            workSpace.id === id ? { ...workSpace, ...updatedWorkSpace, updatedAt: new Date().toISOString() } : updatedWorkSpace
+          ),
+        }),
+      ),
       addFolderToWorkSpace: (workSpaceId, folder) =>
         {
           let workpaces = get().workpaces;

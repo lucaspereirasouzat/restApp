@@ -79,6 +79,9 @@ export function ParametersForm({ control }: BodyFormProps): JSX.Element {
             </MotiView>
           ))}
         </AnimatePresence>
+        <Button onPress={addField} className="bg-blue-500 w-full">
+        <Text>Add Field</Text>
+      </Button>
       </ScrollView>
       {/* <FlatList
         data={field?.value}
@@ -106,9 +109,7 @@ export function ParametersForm({ control }: BodyFormProps): JSX.Element {
           </View>
         )}
       /> */}
-      <Button onPress={addField} className="bg-blue-500 w-full">
-        <Text>Add Field</Text>
-      </Button>
+      
     </View>
   );
 }

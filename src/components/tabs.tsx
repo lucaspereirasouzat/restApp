@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Label } from "./ui/label";
@@ -28,7 +28,7 @@ export default function TabsScreen({
   tabsClassName
 }: TabsScreenProps) {
   return (
-    <View className="flex-1 w-full h-full justify-center p-6">
+    <View className="flex-1 w-full h-full justify-center">
       <Tabs
         value={activeTab}
         onValueChange={setTab}
@@ -42,7 +42,7 @@ export default function TabsScreen({
         ))}
         </TabsList>
         {tabs.map(({value, content}) => (
-          <TabsContent className={cn("h-full w-full", contentClass)} value={value} key={value}>
+          <TabsContent className={cn("h-full w-full p-0 m-0", contentClass)} value={value} key={value}>
             {content}
           </TabsContent>
         ))}

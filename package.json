@@ -17,7 +17,6 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "@hookform/resolvers": "^3.9.1",
-    "@legendapp/state": "^3.0.0-beta.17",
     "@react-native-async-storage/async-storage": "2.1.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/bottom-tabs": "^7.0.6",
@@ -41,7 +40,6 @@
     "@rn-primitives/toggle": "^1.1.0",
     "@rn-primitives/types": "^1.1.0",
     "@tanstack/react-query": "^5.59.20",
-    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",

@@ -6,6 +6,8 @@ import { ScrollView } from "react-native";
 import { Trash } from "lucide-react-native";
 import { AnimatePresence, MotiView } from "moti";
 import { FormCheckBox } from "@/components/check-box";
+import { DropdownMenuList } from "./dropdonw";
+import { BODY_LIST } from "@/constants/auth-options";
 
 interface BodyFormProps {
   control: any;
@@ -35,7 +37,16 @@ export function BodyForm({ control }: BodyFormProps): JSX.Element {
 
   return (
     <View className="w-full h-full justify-between pb-10">
-      <ScrollView className="h-10">
+      <View className="w-full">
+                      <DropdownMenuList
+                        control={control}
+                        errors={errors}
+                        name="body-type"
+                        title="Methods"
+                        valuesList={BODY_LIST}
+                      />
+                    </View>
+      <ScrollView className="h-10 w-full">
         <AnimatePresence>
           {field?.value.map((item, index) => (
             <MotiView
@@ -79,6 +90,9 @@ export function BodyForm({ control }: BodyFormProps): JSX.Element {
             </MotiView>
           ))}
         </AnimatePresence>
+         <Button onPress={addField} className="bg-blue-500 w-full">
+        <Text>Add Field</Text>
+      </Button>
       </ScrollView>
       {/* <FlatList
         data={field?.value}
@@ -106,9 +120,7 @@ export function BodyForm({ control }: BodyFormProps): JSX.Element {
           </View>
         )}
       /> */}
-      <Button onPress={addField} className="bg-blue-500 w-full">
-        <Text>Add Field</Text>
-      </Button>
+     
     </View>
   );
 }

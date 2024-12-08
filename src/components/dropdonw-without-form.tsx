@@ -51,7 +51,7 @@ export function DropdownMenuListSelect({
       <SelectTrigger className="border-0 border-gray-600 p-1 m-0 flex-col  mt-2">
         {children}
       </SelectTrigger>
-      <AnimatePresence exitBeforeEnter>
+      <AnimatePresence>
         <SelectContent
           insets={contentInsets}
           className="w-[100px] bg-black text-white"

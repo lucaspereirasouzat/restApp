@@ -7,22 +7,29 @@ import { customHumanize } from "../../../utils/humanize-time";
 
 interface FlatItemProps {
   item: any;
+  updateItem: (id: string) => void;
   removeItem: (id: string) => void;
 }
 
-const listValues = [{
-            label: 'Edit',
-            value: 'edit',
-            color: 'red',
-          }, {
-            label: 'Delete',
-            value: 'delete',
-            color: 'blue',
-          }]
+const listValues = [
+  {
+    label: "Edit",
+    value: "edit",
+    color: "red",
+  },
+  {
+    label: "Delete",
+    value: "delete",
+    color: "blue",
+  },
+];
 
-export function FlatItem({ item, removeItem }: FlatItemProps) {
+export function FlatItem({ item, removeItem, updateItem }: FlatItemProps) {
   return (
-    <Card key={item.id} className="w-full bg-zinc-950 text-white p-2 mt-1 mb-1 border rounded-md border-gray-600">
+    <Card
+      key={item.id}
+      className="w-full bg-zinc-950 text-white p-2 mt-1 mb-1 border rounded-md border-gray-600"
+    >
       <View className="w-full flex flex-row items-start justify-between">
         <Link
           href={`/(tabs)/details/${item.id}`}
@@ -30,24 +37,35 @@ export function FlatItem({ item, removeItem }: FlatItemProps) {
         >
           <View className="flex items-start gap-3 flex-row">
             <View className="w-8 h-8 bg-teal-500 rounded flex items-center justify-center text-xs font-medium">
-            <File color={'#fff'} className="h-4 w-4 " />
+              <File color={"#fff"} className="h-4 w-4 " />
             </View>
             <View className="space-y-1">
-              <Text className="font-medium text-xl leading-none text-white">{item.name}</Text>
-             <View className="flex flex-row items-center gap-2">
-              {/* <TimerIcon color={'#fff'} className="h-0.5 w-0.5" /> */}
-              <Text className="text-sm text-zinc-400">{customHumanize(new Date(item.updatedAt ?? item.createdAt))}</Text>
+              <Text className="font-medium text-xl leading-none text-white">
+                {item.name}
+              </Text>
+              <View className="flex flex-row items-center gap-2">
+                {/* <TimerIcon color={'#fff'} className="h-0.5 w-0.5" /> */}
+                <Text className="text-sm text-zinc-400">
+                  {customHumanize(new Date(item.updatedAt ?? item.createdAt))}
+                </Text>
               </View>
             </View>
           </View>
         </Link>
         <View className="absolute right-0 top-0">
-          <DropdownMenuListSelect defaultValue="" valuesList={listValues} onSelect={e => {
-            if (e === 'delete') {
-              removeItem(item.id);
-            }
-          }} >
-          <MoreHorizontal color={'#fff'} className="h-4 w-4" />
+          <DropdownMenuListSelect
+            defaultValue=""
+            valuesList={listValues}
+            onSelect={(e) => {
+              if (e === "delete") {
+                removeItem(item.id);
+              }
+              if (e === "edit") {
+                updateItem(item.id);
+              }
+            }}
+          >
+            <MoreHorizontal color={"#fff"} className="h-4 w-4" />
           </DropdownMenuListSelect>
         </View>
       </View>

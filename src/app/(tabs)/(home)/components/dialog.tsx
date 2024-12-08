@@ -17,37 +17,61 @@ import * as z from "zod";
 import { FormInput } from "@/components/input";
 import { useRestStore } from "@/store/useRestStore";
 import { AnimatePresence, View as MotiView } from "moti";
+import { useEffect } from "react";
 
 const validation = z.object({
   name: z.string().min(3).max(255),
 });
 
-export function ModalDialog() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const { createWorkSpace } = useRestStore();
+interface ModalDialogProps {
+  isOpenModal: boolean
+  id?: string;
+  clear: () => void;
+}
 
+export function ModalDialog({id, isOpenModal,clear}: ModalDialogProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { workpaces, createWorkSpace, updateWorkSpace } = useRestStore();
+  
   const {
     control,
     handleSubmit,
     formState: { errors },
     setValue,
   } = useForm({
+    values: {
+      name: workpaces.find((item) => item.id === id)?.name || "",
+    },
     defaultValues: {
       name: "",
     },
     resolver: zodResolver(validation),
   });
 
+  useEffect(() => {
+    if (isOpenModal) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }, [isOpenModal, id])
+  
+
   const onSubmit = (data) => {
     setIsOpen(false);
     setValue("name", "");
+    if(id){
+      updateWorkSpace(id, data)
+      clear()
+      return
+    }
     createWorkSpace(data);
   };
 
   return (
     <AnimatePresence >
-      <Dialog onOpenChange={(open) => setIsOpen(open)} open={isOpen}>
-        <DialogTrigger asChild>
+      <Dialog onOpenChange={(open) => {setIsOpen(open); clear()}} open={isOpen}>
+        {/* <DialogTrigger asChild>
           <Button
             onPress={() => setIsOpen(true)}
             className="bg-yellow-300 mx-1"
@@ -55,7 +79,7 @@ export function ModalDialog() {
           >
             <Text>Create WorkSpaces</Text>
           </Button>
-        </DialogTrigger>
+        </DialogTrigger> */}
         <DialogContent className="sm:max-w-[425px] ">
           <MotiView
             key={`modal`}

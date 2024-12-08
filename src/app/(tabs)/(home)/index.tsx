@@ -5,14 +5,24 @@ import { useRestStore } from "../../../store/useRestStore";
 import { ModalDialog } from "./components/dialog";
 import { FlatItem } from "./flat-Item";
 import { DropdownMenuListSelect } from "../../../components/dropdonw-without-form";
-import { ArrowUpDown } from "lucide-react-native";
+import { ArrowUpDown, Plus, X } from "lucide-react-native";
 import { sortList } from "@/constants/sort-list";
 import { AnimatePresence, View as MotiView } from "moti";
+
+const ADD_LIST = [
+  {
+    label: "New WorkSpace",
+    value: "create-workspace",
+    color: "#fff",
+  },
+]
 
 export default function HomeScreen() {
   const { workpaces, removeWorkSpace } = useRestStore();
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState("");
+  const [id, setId] = useState<string | undefined>(undefined);
+  const [open, setOpen] = useState(false);
   const filterWorkspaces = useMemo(() => {
     let sortedItens = workpaces;
     if (sort === "name-asc") {
@@ -39,11 +49,15 @@ export default function HomeScreen() {
       <View className="mt-16 mr-2 ml-2">
         <View className="h-full w-full">
           <View className="w-full flex-row align-middle justify-center">
+            <View className="w-11/12">
             <Input
               placeholder="Search"
+              value={filter}
               onChangeText={(text) => setFilter(text)}
               className="m-2 border rounded-md placeholder:italic placeholder:text-slate-400 border-gray-300 text-gray-300 w-11/12"
             />
+           {filter && <X onPress={() => setFilter('')} color="#fff" className="w-2 h-2 absolute top-5 right-10"/>}
+            </View>
             <DropdownMenuListSelect
               defaultValue={sort}
               valuesList={sortList}
@@ -53,9 +67,23 @@ export default function HomeScreen() {
             >
               <ArrowUpDown color={"#fff"} className="h-4 w-4" />
             </DropdownMenuListSelect>
+             <DropdownMenuListSelect
+              defaultValue={sort}
+              valuesList={ADD_LIST}
+              onSelect={(e) => {
+                if(e === 'create-workspace') {
+                  setOpen(true)
+                }
+              }}
+            >
+              <Plus color={"#fff"} className="h-4 w-4" />
+            </DropdownMenuListSelect>
           </View>
           <View className="w-full h-5"></View>
-          <ModalDialog />
+          <ModalDialog isOpenModal={open} id={id} clear={() => {
+            setOpen(false)
+            setId(undefined)
+          }} />
           <AnimatePresence>
             {filterWorkspaces.map((item) => (
               <MotiView
@@ -67,6 +95,7 @@ export default function HomeScreen() {
                 className="w-full"
               >
                 <FlatItem
+                  updateItem={(id) => { setOpen(true); setId(id)}}
                   removeItem={(id) => removeWorkSpace(id)}
                   item={item}
                 />
